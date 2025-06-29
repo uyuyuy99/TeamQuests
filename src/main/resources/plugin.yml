@@ -1,0 +1,4 @@
+name: TeamQuests
+version: '1.0'
+main: me.uyuyuy99.teamquests.TeamQuests
+api-version: '1.21'
