@@ -1,0 +1,68 @@
+example1:
+  name: "&fBreak 50 dirt"
+  type: BREAK_BLOCKS
+  goal: 50
+  # The type(s) of entities/blocks needed to progress through the quest.
+  # Only relevant for certain types of challenges (PLACE_BLOCKS, BREAK_BLOCKS, KILL_ENTITIES)
+  # If not specified, all entities/blocks will count toward the goal
+  valid-objects:
+    - DIRT
+    - GRASS_BLOCK
+  icon: DIAMOND_PICKAXE
+  icon-glow: true
+  prize-commands:  # Prizes given to every player when their team completes the challenge
+    - "give {player} emerald 64"
+
+example2:
+  name: "&fBreak 100 blocks"
+  type: BREAK_BLOCKS
+  goal: 100
+  icon: DIAMOND_PICKAXE
+
+example3:
+  name: "&7Place 100 blocks"
+  type: PLACE_BLOCKS
+  goal: 100
+  icon: DIRT
+
+example4:
+  name: "&7Place 50 stone"
+  type: PLACE_BLOCKS
+  goal: 50
+  valid-objects:
+    - STONE
+  icon: STONE
+
+example5:
+  name: "&6Kill 5 players"
+  type: KILL_ENTITIES
+  goal: 5
+  valid-objects:
+    - PLAYER
+  icon: DIAMOND_SWORD
+
+example6:
+  name: "&6Kill 10 mobs"
+  type: KILL_ENTITIES
+  goal: 10
+  icon: DIAMOND_SWORD
+
+example7:
+  name: "&6Kill 15 zombies"
+  type: KILL_ENTITIES
+  goal: 15
+  valid-objects:
+    - ZOMBIE
+  icon: DIAMOND_SWORD
+
+example8:
+  name: "&aEarn 1000 EXP"
+  type: EARN_EXP
+  goal: 1000
+  icon: EXPERIENCE_BOTTLE
+
+example9:
+  name: "&dTravel 200 blocks"
+  type: TRAVEL_BLOCKS
+  goal: 200
+  icon: OAK_BOAT

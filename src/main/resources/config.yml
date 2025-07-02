@@ -1,0 +1,19 @@
+options:
+  max-team-name-length: 24  # Maximum characters for team name
+  invites-expire-after: 5  # Minutes until team invites expire
+  quest-cooldown: 1440  # Minutes until players can re-do quests (1440 = 24 hours)
+messages:
+  team-create: "&aYou created the team &7{team}&a!"
+  cant-create-while-in-team: "&c&l(!) &cYou're already in a team!"
+  team-invite: "&aYou invited &7{player}&a to join the &7{team}&a team!"
+  cant-invite-while-in-team: "&c&l(!) &7{player}&c is already in a team!"
+  invite-expired: "&c&l(!) &cYour invite to team &7{team}&c expired!"
+  joined-your-team: "&7{player}&a has joined your team!"
+  joined-another-team: "&aYou joined team &7{team}&a! Type &7/team quests &ato view your quest status."
+  completed-quest: "&aYour team completed the quest: &6{quest}&a!"
+quest-gui:
+  title: "Team Quests"
+  item-text:
+    - "{quest}"
+    - " "
+    - "&fProgress: {progressbar}"
