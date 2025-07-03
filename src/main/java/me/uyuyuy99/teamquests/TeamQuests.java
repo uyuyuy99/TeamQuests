@@ -1,6 +1,7 @@
 package me.uyuyuy99.teamquests;
 
 import lombok.SneakyThrows;
+import me.uyuyuy99.teamquests.cmd.TeamCmd;
 import me.uyuyuy99.teamquests.quest.QuestManager;
 import me.uyuyuy99.teamquests.team.TeamManager;
 import org.bukkit.entity.Player;
@@ -21,14 +22,19 @@ public final class TeamQuests extends JavaPlugin {
 
         Config.load();
 
+        // Load data
         getLogger().info("Loading teams...");
         teams = new TeamManager();
         getLogger().info("Loading quests...");
         quests = new QuestManager();
 
+        // Load player data in case anyone is online when plugin is loaded
         for (Player pl : getServer().getOnlinePlayers()) {
             teams.loadPlayerIfNeeded(pl);
         }
+
+        // Register commands
+        new TeamCmd().register();
     }
 
     @Override

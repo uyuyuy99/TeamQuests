@@ -15,10 +15,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class TeamManager implements Listener {
 
@@ -109,6 +106,9 @@ public class TeamManager implements Listener {
         if (teamId != null && !teamMap.containsKey(teamId)) {
             teamMap.put(teamId, new Team(teamId));
         }
+
+        // Also update the player's name in case it changed
+        teamMap.get(teamId).getMember(player).setName(player.getName());
     }
 
     // Load player's team on join, and execute any prize commands still in queue
@@ -133,13 +133,42 @@ public class TeamManager implements Listener {
         return null;
     }
 
+    // Returns list of all teams currently loaded in memory
+    public Collection<Team> getTeams() {
+        return teamMap.values();
+    }
+
     // Creates & returns a new team
-    public Team createTeam(Player leader, String name) {
+    public void createTeam(Player leader, String name) {
         int teamId = nextTeamId++;
         Team team = new Team(teamId, leader, name);
         teamIdMap.put(leader.getUniqueId(), teamId);
         teamMap.put(teamId, team);
-        return team;
+    }
+
+    // Removes a player from a team
+    public void leave(Player player, Team team) {
+        teamIdMap.remove(player.getUniqueId());
+        team.removePlayer(player);
+    }
+
+    // Disbands a team (deletes it)
+    public void disbandTeam(Team team) {
+        File teamFile = team.getStorage().getFile();
+        teamMap.remove(team.getId());
+        teamIdMap.entrySet().removeIf(entry -> entry.getValue() == team.getId());
+
+        // Delete team file on another thread
+        new BukkitRunnable() {
+            @Override
+            public void run() {
+                if (teamFile.delete()) {
+                    plugin.getLogger().info("Successfully deleted team file: " + teamFile.getName());
+                } else {
+                    plugin.getLogger().warning("Unable to delete team file: " + teamFile.getName());
+                }
+            }
+        }.runTaskAsynchronously(plugin);
     }
 
     public static File getFolder() {

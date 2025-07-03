@@ -58,12 +58,15 @@ public class Quest {
     // Execute all prize commands for each player in team, or add to their command queue if offline
     public void givePrize(Team team) {
         for (Team.Member member : team.getMembers()) {
+            // Queue up all the prize commands
             for (String cmd : prizeCmds) {
-                team.addToCommandQueue(member, cmd); // Queue each command
+                team.addToCommandQueue(member, cmd);
             }
+
+            // If player online, execute commands now & send them a completion message
             Player pl = member.getPlayer();
             if (pl != null) {
-                team.executeCommandQueue(pl); // If player online, execute commands now
+                team.executeCommandQueue(pl);
                 Config.sendMsg("completed-quest", pl,
                         "team", team.getName(),
                         "quest", name

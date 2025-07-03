@@ -2,3 +2,19 @@ name: TeamQuests
 version: '1.0'
 main: me.uyuyuy99.teamquests.TeamQuests
 api-version: '1.21'
+permissions:
+  teamquests.create:
+    description: Create teams
+    default: true
+  teamquests.invite:
+    description: Invite players to your team
+    default: true
+  teamquests.join:
+    description: Join a team (if invited)
+    default: true
+  teamquests.leave:
+    description: Leave your team
+    default: true
+  teamquests.quests:
+    description: View the team quests menu
+    default: true

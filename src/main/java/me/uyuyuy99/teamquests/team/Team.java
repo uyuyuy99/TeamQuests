@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Member;
 import java.util.*;
 
 @SuppressWarnings("unchecked")
@@ -77,18 +78,39 @@ public class Team {
     }
 
     // Gets member object corresponding to the given player on this team, or null if none exists
-    private Member getMember(Player player) {
+    private Member getMember(UUID uuid) {
         for (Member member : members) {
-            if (member.getUuid().equals(player.getUniqueId())) {
+            if (member.getUuid().equals(uuid)) {
                 return member;
             }
         }
         return null;
     }
+    public Member getMember(Player player) {
+        return getMember(player.getUniqueId());
+    }
 
     // Adds a member to the team
     public void addMember(Player player) {
         members.add(new Member(player));
+        invites.removeIf(invite -> invite.getUuid().equals(player.getUniqueId())); // Remove invite
+    }
+
+    public boolean isLeader(Player player) {
+        return player.getUniqueId().equals(leader);
+    }
+
+    // Get the cached name of the leader
+    public String getLeaderName() {
+        return getMember(leader).getName();
+    }
+
+    // Sends a message to all online team members
+    public void sendMessage(String msg) {
+        for (Member member : members) {
+            Player pl = Bukkit.getPlayer(member.getUuid());
+            if (pl != null) pl.sendMessage(msg);
+        }
     }
 
     public void addToCommandQueue(Member member, String cmd) {
@@ -151,8 +173,14 @@ public class Team {
         return false;
     }
 
-    public void addInvite() {
-        //TODO
+    // Invites a player to the team
+    public void addInvite(Player player) {
+        invites.add(new Invite(player));
+    }
+
+    // Removes player from this team
+    public void removePlayer(Player player) {
+        members.removeIf(member -> member.getUuid().equals(player.getUniqueId()));
     }
 
     // Used to store data for each member of the team
@@ -162,16 +190,28 @@ public class Team {
         private UUID uuid;
         @Setter
         private String name;
+        private long joinedAt; // Timestamp when player joined team
         private List<String> cmdQueue; // Prize commands yet to be run
 
         public Member(Player player) {
             this.uuid = player.getUniqueId();
             this.name = player.getName();
+            this.joinedAt = System.currentTimeMillis();
             this.cmdQueue = new ArrayList<>();
         }
 
         public Player getPlayer() {
             return Bukkit.getPlayer(uuid);
+        }
+
+        // Returns true if the "/team leave" cooldown has expired
+        public boolean canLeaveTeam() {
+            return (System.currentTimeMillis() - joinedAt) > (Config.get().getInt("options.team-leave-cooldown") * 60000L);
+        }
+
+        // Gets the amount of time left before the "/team leave" cooldown expires
+        public long getLeaveCooldownLeft() {
+            return (Config.get().getInt("options.team-leave-cooldown") * 60000L) - (System.currentTimeMillis() - joinedAt);
         }
 
     }
@@ -204,6 +244,11 @@ public class Team {
         private final UUID uuid;
         private long sentAt;
 
+        public Invite(Player player) {
+            this.uuid = player.getUniqueId();
+            this.sentAt = System.currentTimeMillis();
+        }
+
         public boolean isExpired() {
             return (System.currentTimeMillis() - sentAt) > (Config.get().getInt("options.invites-expire-after") * 60000L);
         }
@@ -219,6 +264,7 @@ public class Team {
                 Map<Object, Object> map = new HashMap<>();
                 map.put("uuid", member.getUuid().toString());
                 map.put("name", member.getName());
+                map.put("joinedAt", member.getJoinedAt());
                 map.put("cmdQueue", member.getCmdQueue());
                 return map;
             }
@@ -229,6 +275,7 @@ public class Team {
                 return new Member(
                         UUID.fromString((String) map.get("uuid")),
                         (String) map.get("name"),
+                        (long) map.get("joinedAt"),
                         (List<String>) map.get("cmdQueue")
                 );
             }

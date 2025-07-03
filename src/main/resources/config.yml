@@ -1,15 +1,30 @@
 options:
-  max-team-name-length: 24  # Maximum characters for team name
+  max-team-name-length: 32  # Maximum characters for team name
+  max-team-size: 5  # Maximum number of players in a team
   invites-expire-after: 5  # Minutes until team invites expire
   quest-cooldown: 1440  # Minutes until players can re-do quests (1440 = 24 hours)
+  team-leave-cooldown: 1440  # Minutes until players can leave team after joining
+  only-leader-can-invite: true  # Change to false to allow all team members to send invites
 messages:
-  team-create: "&aYou created the team &7{team}&a!"
+  team-create: "&aYou created team &7{team}&a!"
   cant-create-while-in-team: "&c&l(!) &cYou're already in a team!"
-  team-invite: "&aYou invited &7{player}&a to join the &7{team}&a team!"
+  team-name-too-long: "&c&l(!) &cYour team name may not exceed &7{max}&c characters."
+  sent-invite: "&aYou invited &7{player}&a to join the &7{team}&a team!"
+  received-invite: "&a&l(!) &aYou received an invite to team &7{team}&a! Type &e/team join {team}&a to join."
+  already-invited: "&c&l(!) &cYou've already invited &7{player}&c to the team."
   cant-invite-while-in-team: "&c&l(!) &7{player}&c is already in a team!"
+  only-leader-can-invite: "&c&l(!) &cOnly the leader (&7{leader}&c) can invite players to the team!"
+  team-reached-player-limit: "&c&l(!) &cTeam &7{team}&c has reached its maximum capacity of &7{max}&c players!"
   invite-expired: "&c&l(!) &cYour invite to team &7{team}&c expired!"
+  no-active-invites: "&c&l(!) &cYou don't have an active invite to that team."
+  cant-join-while-in-team: "&c&l(!) &cYou're already in a team!"
   joined-your-team: "&7{player}&a has joined your team!"
   joined-another-team: "&aYou joined team &7{team}&a! Type &7/team quests &ato view your quest status."
+  team-leave: "&cYou left team &7{team}&c."
+  not-in-team: "&c&l(!) &cYou are not in a team!"
+  cant-leave-team: "&c&l(!) &cYou can't leave team &7{team}&c for another &7{time}&c."
+  disband-confirm: "&cIf you leave &7{team}&c, the team will be disbanded because you're the leader. If you're sure you want to do this, type &e/team leave confirm"
+  disband: "&cYour team &7{team}&c has been disbanded!"
   completed-quest: "&aYour team completed the quest: &6{quest}&a!"
 quest-gui:
   title: "Team Quests"
