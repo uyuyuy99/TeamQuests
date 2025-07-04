@@ -6,10 +6,15 @@ options:
   team-leave-cooldown: 1440  # Minutes until players can leave team after joining
   only-leader-can-invite: true  # Change to false to allow all team members to send invites
 messages:
+  team-info:
+    - "&dYour Team: &7{team}"
+    - "&dLeader: &7{leader}"
+    - "&dMembers: &7{members}"
+  not-in-team: "&c&l(!) &cYou are not in a team!"
   team-create: "&aYou created team &7{team}&a!"
   cant-create-while-in-team: "&c&l(!) &cYou're already in a team!"
   team-name-too-long: "&c&l(!) &cYour team name may not exceed &7{max}&c characters."
-  sent-invite: "&aYou invited &7{player}&a to join the &7{team}&a team!"
+  sent-invite: "&aYou invited &7{player}&a to join team &7{team}&a!"
   received-invite: "&a&l(!) &aYou received an invite to team &7{team}&a! Type &e/team join {team}&a to join."
   already-invited: "&c&l(!) &cYou've already invited &7{player}&c to the team."
   cant-invite-while-in-team: "&c&l(!) &7{player}&c is already in a team!"
@@ -21,7 +26,6 @@ messages:
   joined-your-team: "&7{player}&a has joined your team!"
   joined-another-team: "&aYou joined team &7{team}&a! Type &7/team quests &ato view your quest status."
   team-leave: "&cYou left team &7{team}&c."
-  not-in-team: "&c&l(!) &cYou are not in a team!"
   cant-leave-team: "&c&l(!) &cYou can't leave team &7{team}&c for another &7{time}&c."
   disband-confirm: "&cIf you leave &7{team}&c, the team will be disbanded because you're the leader. If you're sure you want to do this, type &e/team leave confirm"
   disband: "&cYour team &7{team}&c has been disbanded!"

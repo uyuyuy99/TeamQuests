@@ -1,8 +1,11 @@
 name: TeamQuests
 version: '1.0'
 main: me.uyuyuy99.teamquests.TeamQuests
-api-version: '1.21'
+api-version: '1.20'
 permissions:
+  teamquests.info:
+    description: View your team info
+    default: true
   teamquests.create:
     description: Create teams
     default: true

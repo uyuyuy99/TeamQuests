@@ -1,5 +1,5 @@
 example1:
-  name: "&fBreak 50 dirt"
+  name: "&6Break 50 dirt"
   type: BREAK_BLOCKS
   goal: 50
   # The type(s) of entities/blocks needed to progress through the quest.
@@ -10,23 +10,27 @@ example1:
     - GRASS_BLOCK
   icon: DIAMOND_PICKAXE
   icon-glow: true
-  prize-commands:  # Prizes given to every player when their team completes the challenge
+  # Prizes given to every team member when their team completes the quest.
+  # These commands only execute when the player is online.
+  prize-commands:
     - "give {player} emerald 64"
+    - "eco give {player} 100"
+    - "xp give {player} 100"
 
 example2:
-  name: "&fBreak 100 blocks"
+  name: "&6Break 100 blocks"
   type: BREAK_BLOCKS
   goal: 100
   icon: DIAMOND_PICKAXE
 
 example3:
-  name: "&7Place 100 blocks"
+  name: "&6Place 100 blocks"
   type: PLACE_BLOCKS
   goal: 100
   icon: DIRT
 
 example4:
-  name: "&7Place 50 stone"
+  name: "&6Place 50 stone"
   type: PLACE_BLOCKS
   goal: 50
   valid-objects:
@@ -56,13 +60,29 @@ example7:
   icon: DIAMOND_SWORD
 
 example8:
-  name: "&aEarn 1000 EXP"
+  name: "&6Earn 1000 EXP"
   type: EARN_EXP
   goal: 1000
   icon: EXPERIENCE_BOTTLE
 
 example9:
-  name: "&dTravel 200 blocks"
+  name: "&6Travel 200 blocks"
   type: TRAVEL_BLOCKS
   goal: 200
   icon: OAK_BOAT
+
+# If you set the type to CUSTOM, you will have to use this command to advance a team's quest progress:
+#              /team addprogress <player> <questId< <progress>
+# For example: /team addprogress Notch example10 100
+# You can use this to make custom quests by configuring other plugins to run this command on certain events.
+example10:
+  name: "&6Custom Quest #1"
+  type: CUSTOM
+  goal: 100
+  icon: ENDER_PEARL
+
+example11:
+  name: "&6Custom Quest #2"
+  type: CUSTOM
+  goal: 100
+  icon: ENDER_PEARL
