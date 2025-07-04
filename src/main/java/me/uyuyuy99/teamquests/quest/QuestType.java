@@ -8,7 +8,6 @@ import org.bukkit.entity.EntityType;
 public enum QuestType {
 
     EARN_EXP,
-    REACH_LEVEL,
     PLACE_BLOCKS(Material.class),
     BREAK_BLOCKS(Material.class),
     TRAVEL_BLOCKS,

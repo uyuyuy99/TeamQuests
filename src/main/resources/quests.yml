@@ -1,6 +1,8 @@
-example1:
+example1: # This is the quest ID (used in the /team addprogress command)
   name: "&6Break 50 dirt"
+  # The type of quest
   type: BREAK_BLOCKS
+  # The number that must be reached
   goal: 50
   # The type(s) of entities/blocks needed to progress through the quest.
   # Only relevant for certain types of challenges (PLACE_BLOCKS, BREAK_BLOCKS, KILL_ENTITIES)
@@ -8,6 +10,7 @@ example1:
   valid-objects:
     - DIRT
     - GRASS_BLOCK
+  # The icon shown in the '/team quests' menu
   icon: DIAMOND_PICKAXE
   icon-glow: true
   # Prizes given to every team member when their team completes the quest.
