@@ -13,6 +13,8 @@ public class TeamCmd extends Cmd {
                 .withSubcommand(new TeamInviteCmd().build())
                 .withSubcommand(new TeamJoinCmd().build())
                 .withSubcommand(new TeamLeaveCmd().build())
+                .withSubcommand(new TeamQuestsCmd().build())
+                .withSubcommand(new TeamAddProgressCmd().build())
                 .register();
     }
 

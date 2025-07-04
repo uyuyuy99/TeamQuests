@@ -1,5 +1,9 @@
 package me.uyuyuy99.teamquests.quest;
 
+import me.uyuyuy99.teamquests.TeamQuests;
+import me.uyuyuy99.teamquests.team.Team;
+import me.uyuyuy99.teamquests.team.TeamManager;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,11 +21,6 @@ public class QuestListeners implements Listener {
 
     public QuestListeners(QuestManager quests) {
         this.quests = quests;
-    }
-
-    @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
-    public void onJoin(PlayerJoinEvent event) {
-        //TODO execute command queue
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -52,8 +51,17 @@ public class QuestListeners implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent event) {
-        long distance = (long) (Math.abs(event.getFrom().distance(event.getTo())) * 1000);
-        quests.progress(event.getPlayer(), QuestType.TRAVEL_BLOCKS, distance);
+        Player player = event.getPlayer();
+        Team team = TeamQuests.get().teams().getTeam(player);
+
+        // Only run distance calculation if player is in team and has yet to complete a relevant quest
+        if (team != null && quests.hasUnfinishedQuest(team, QuestType.TRAVEL_BLOCKS)) {
+            Location from = event.getFrom().clone();
+            from.setY(event.getTo().getY()); // Ignore y-values
+
+            long distance = (long) (Math.abs(from.distance(event.getTo())) * 1000);
+            quests.progress(player, QuestType.TRAVEL_BLOCKS, distance);
+        }
     }
 
 }

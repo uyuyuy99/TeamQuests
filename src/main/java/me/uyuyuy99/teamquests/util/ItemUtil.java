@@ -1,5 +1,7 @@
 package me.uyuyuy99.teamquests.util;
 
+import dev.dejvokep.boostedyaml.block.implementation.Section;
+import me.uyuyuy99.teamquests.Config;
 import org.bukkit.Material;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
@@ -45,12 +47,19 @@ public class ItemUtil {
                 section.getInt(key + "-amount", 1)
         );
 
-//        if (section.isSet(key + "-name")) {
-//            setItemName(item, section.getString(key + "-name"));
-//        }
-//        if (section.isSet(key + "-lore")) {
-//            setItemLore(item, section.getStringList(key + "-lore"));
-//        }
+        if (section.getBoolean(key + "-glow", false)) {
+            addGlow(item);
+        }
+
+        hideItemAttributes(item);
+        return item;
+    }
+    public static ItemStack getIconFromConfig(Section section, String key) {
+        ItemStack item = new ItemStack(
+                Material.valueOf(section.getString(key).toUpperCase()),
+                section.getInt(key + "-amount", 1)
+        );
+
         if (section.getBoolean(key + "-glow", false)) {
             addGlow(item);
         }

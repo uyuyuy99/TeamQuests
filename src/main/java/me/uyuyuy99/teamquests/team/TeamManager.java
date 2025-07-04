@@ -38,7 +38,7 @@ public class TeamManager implements Listener {
                 plugin.getResource("_players.yml")
         );
         nextTeamId = playerStorage.getInt("nextTeamId");
-        Section teamSection = playerStorage.getSection("teams");
+        Section teamSection = playerStorage.createSection("teams");
         for (Map.Entry<String, Object> entry : teamSection.getStringRouteMappedValues(false).entrySet()) {
             teamIdMap.put(UUID.fromString(entry.getKey()), (int) entry.getValue());
         }
@@ -84,12 +84,15 @@ public class TeamManager implements Listener {
     // Save _players.yml
     @SneakyThrows
     private void savePlayers() {
+        playerStorage.set("nextTeamId", nextTeamId);
+
         Section teamSection = playerStorage.getSection("teams");
         if (teamSection != null) teamSection.clear();
 
         for (Map.Entry<UUID, Integer> entry : teamIdMap.entrySet()) {
             teamSection.set(entry.getKey().toString(), entry.getValue());
         }
+
         playerStorage.save();
     }
 
@@ -103,12 +106,13 @@ public class TeamManager implements Listener {
     public void loadPlayerIfNeeded(Player player) {
         Integer teamId = teamIdMap.get(player.getUniqueId());
 
-        if (teamId != null && !teamMap.containsKey(teamId)) {
-            teamMap.put(teamId, new Team(teamId));
+        if (teamId != null) {
+            if (!teamMap.containsKey(teamId)) {
+                teamMap.put(teamId, new Team(teamId));
+            }
+            // Also update the player's name in case it changed
+            teamMap.get(teamId).getMember(player).setName(player.getName());
         }
-
-        // Also update the player's name in case it changed
-        teamMap.get(teamId).getMember(player).setName(player.getName());
     }
 
     // Load player's team on join, and execute any prize commands still in queue
@@ -144,6 +148,12 @@ public class TeamManager implements Listener {
         Team team = new Team(teamId, leader, name);
         teamIdMap.put(leader.getUniqueId(), teamId);
         teamMap.put(teamId, team);
+    }
+
+    // Adds a player to a team
+    public void join(Player player, Team team) {
+        team.addMember(player);
+        teamIdMap.put(player.getUniqueId(), team.getId());
     }
 
     // Removes a player from a team

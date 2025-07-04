@@ -38,7 +38,7 @@ public class TimeUtil {
         }
     }
 
-    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d, ''yy 'at' HH:mm");
+    private static SimpleDateFormat dateFormat = new SimpleDateFormat("MMM d 'at' HH:mm");
     public static String formatDate(long epochMs, String defaultText) {
         if (epochMs <= 0) return defaultText;
         return dateFormat.format(new Date(epochMs));

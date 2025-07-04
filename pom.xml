@@ -62,7 +62,7 @@
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.3.0</version>
                 <configuration>
-                    <outputDirectory>${user.home}/Desktop/1.21.6 Test Server/plugins</outputDirectory>
+                    <outputDirectory>${user.home}/Desktop/1.21.7 Test Server/plugins</outputDirectory>
                 </configuration>
             </plugin>
         </plugins>
@@ -97,7 +97,7 @@
         <dependency>
             <groupId>org.spigotmc</groupId>
             <artifactId>spigot-api</artifactId>
-            <version>1.21.6-R0.1-SNAPSHOT</version>
+            <version>1.21.7-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -115,13 +115,13 @@
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-core</artifactId>
-            <version>10.1.0</version>
+            <version>10.1.1</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>dev.jorel</groupId>
             <artifactId>commandapi-bukkit-shade</artifactId>
-            <version>10.1.0</version>
+            <version>10.1.1</version>
         </dependency>
         <dependency>
             <groupId>dev.dejvokep</groupId>

@@ -26,9 +26,22 @@ messages:
   disband-confirm: "&cIf you leave &7{team}&c, the team will be disbanded because you're the leader. If you're sure you want to do this, type &e/team leave confirm"
   disband: "&cYour team &7{team}&c has been disbanded!"
   completed-quest: "&aYour team completed the quest: &6{quest}&a!"
+  no-quest-found: "&cCouldn't add quest progress; no quest with ID '{questid}' found."
+  add-quest-progress: "&7Added {progress} progress for quest '{quest}&7' to team '{team}' (ID: {teamid})"
 quest-gui:
+  rows: 4  # Number of rows in the GUI (must be between 1 and 6)
+  vertical-border: true  # Whether to put filler icons on the sides
+  horizontal-border: true  # Whether to put filler icons on the top/bottom
+  border-icon: BLACK_STAINED_GLASS_PANE
   title: "Team Quests"
-  item-text:
+  quest-unfinished-text:  # Text displayed for each quest before it's finished
     - "{quest}"
     - " "
     - "&fProgress: {progressbar}"
+  quest-finished-text:  # Text displayed for each quest after it's finished
+    - "{quest}"
+    - " "
+    - "&fProgress: {progressbar}"
+    - " "
+    - "&aCompleted: &7{completed}"
+    - "&dCooldown ends: &7{cooldown}"

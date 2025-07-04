@@ -36,7 +36,7 @@ public class TeamJoinCmd extends SubCmd {
                             }
 
                             team.sendMessage(Config.getMsg("joined-your-team", "player", player.getName()));
-                            team.addMember(player);
+                            teams.join(player, team);
                             Config.sendMsg("joined-another-team", player, "team", team.getName());
                         } else {
                             Config.sendMsg("no-active-invites", player, "team", teamName);

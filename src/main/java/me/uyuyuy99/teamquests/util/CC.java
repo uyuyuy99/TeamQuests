@@ -15,4 +15,8 @@ public class CC {
         return list;
     }
 
+    public static String strip(String string) {
+        return ChatColor.stripColor(string);
+    }
+
 }

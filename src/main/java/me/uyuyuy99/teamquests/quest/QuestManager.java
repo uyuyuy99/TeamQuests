@@ -1,20 +1,30 @@
 package me.uyuyuy99.teamquests.quest;
 
+import de.themoep.inventorygui.GuiElementGroup;
+import de.themoep.inventorygui.InventoryGui;
+import de.themoep.inventorygui.StaticGuiElement;
+import me.uyuyuy99.teamquests.Config;
 import me.uyuyuy99.teamquests.TeamQuests;
 import me.uyuyuy99.teamquests.team.Team;
 import me.uyuyuy99.teamquests.util.CC;
 import me.uyuyuy99.teamquests.util.ItemUtil;
+import me.uyuyuy99.teamquests.util.NumberUtil;
+import me.uyuyuy99.teamquests.util.TimeUtil;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.ListIterator;
 
 public class QuestManager {
 
@@ -64,21 +74,35 @@ public class QuestManager {
         progress(player, type, 1, null);
     }
 
-    // Give progress to a specific quest (used for custom quests)
-    public void progress(Player player, Quest quest, long progress) {
+    // Give progress to a specific quest (used for custom quests). Returns true if progress was added
+    public boolean progress(Player player, Quest quest, long progress) {
         Team team = plugin.teams().getTeam(player);
-        if (team == null) return; // Can't do quests if not part of a team
-        if (team.hasCompleted(quest)) return; // Don't bother progressing completed quests
+        if (team == null) return false; // Can't do quests if not part of a team
+        if (team.hasCompleted(quest)) return false; // Don't bother progressing completed quests
 
         // Add the progress & check if they finished
         team.addQuestProgress(quest, progress);
         checkCompletion(team, quest);
+        return true;
     }
 
     private void checkCompletion(Team team, Quest quest) {
         if (team.hasCompleted(quest)) {
             quest.givePrize(team);
+            plugin.getLogger().info("Team '" + CC.strip(team.getName()) + "' (ID: " + team.getId()
+                    + ") completed quest '" + CC.strip(quest.getName()) + "' (ID: " + quest.getId() + ")");
         }
+    }
+
+    // Returns true if player has unfinished quests of the given type
+    public boolean hasUnfinishedQuest(Team team, QuestType type) {
+        for (Team.Progress progress : team.getQuestProgresses()) {
+            Quest quest = getQuest(progress.getQuestId());
+            if (quest != null && quest.getType() == type && !progress.hasCompleted()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     // Loads the quest list from quests.yml
@@ -111,68 +135,85 @@ public class QuestManager {
             if (section.isSet("valid-objects")) quest.setValidObjects(section.getStringList("valid-objects"));
             if (section.isSet("prize-commands")) quest.setPrizeCmds(section.getStringList("prize-commands"));
 
-            if (quest.getType() == QuestType.TRAVEL_BLOCKS) {
-                quest.setGoal(quest.getGoal() * 1000);
-            }
-
             questList.add(quest);
         }
     }
 
     // Returns false if player has no team; opens menu and returns true if they do
-//    public boolean openGui(Player player) {
-//        Team team = plugin.teams().getTeam(player);
-//        if (team == null) return false;
-//
-//        List<String> layout = Config.get().getStringList("quest-gui.layout");
-//        ListIterator<String> iter = layout.listIterator();
-//        char slotChar = 'B';
-//        while (iter.hasNext()) {
-//            String line = iter.next();
-//
-//            while (line.contains("A")) {
-//                line = line.replaceFirst("A", String.valueOf(slotChar++));
-//            }
-//            iter.set(line);
-//        }
-//
-//        InventoryGui gui = new InventoryGui(plugin,
-//                Config.get().getString("quest-gui.title")
-//                        .replace("%time%", Util.getReadableTime(nextReset - System.currentTimeMillis())),
-//                layout.toArray(new String[0]));
-//        gui.setFiller(Util.getIconFromConfig("quest-gui.filler-icon"));
-//
-//        slotChar = 'B';
-//
-//        for (Quest quest : activeQuests) {
-//            StringBuilder progressBar = new StringBuilder(CC.GREEN);
-//
-//            if (playerData.hasCompleted(quest)) {
-//                progressBar.append(CC.BOLD).append("Completed!");
-//            } else {
-//                int progressBarLength = 30;
-//                int progress = (int) (((float) playerData.getQuestProgress(quest)) / ((float) quest.getGoal()) * progressBarLength);
-//
-//                for (int j=0; j<progressBarLength; j++) {
-//                    if (j == progress)
-//                        progressBar.append(CC.DARK_GRAY);
-//                    progressBar.append("|");
-//                }
-//            }
-//
-//            List<String> text = Config.get().getStringList("quest-gui.item-text");
-//            text.replaceAll(s -> s.replace("%quest%", quest.getName()));
-//            text.replaceAll(s -> s.replace("%progressbar%", progressBar.toString()));
-//            text = CC.format(text);
-//
-//            gui.addElement(new StaticGuiElement(slotChar++,
-//                    quest.getIcon(),
-//                    text.toArray(new String[0])
-//            ));
-//        }
-//
-//        gui.show(player);
-//        return true;
-//    }
+    public boolean openGui(Player player) {
+        Team team = plugin.teams().getTeam(player);
+        if (team == null) return false;
+
+        // Create the layout for the GUI
+        int rows = Config.get().getInt("quest-gui.rows");
+        String[] layout = new String[rows];
+        Arrays.fill(layout, "QQQQQQQQQ");
+
+        // Add borders of filler icons if needed
+        if (Config.get().getBoolean("quest-gui.vertical-border")) {
+            for (int i = 0; i < rows; i++) {
+                String line = layout[i];
+                StringBuilder newLine = new StringBuilder(line);
+                newLine.setCharAt(0, ' ');
+                newLine.setCharAt(8, ' ');
+                layout[i] = newLine.toString();
+            }
+        }
+        if (Config.get().getBoolean("quest-gui.horizontal-border")) {
+            layout[0] = "         ";
+            layout[rows - 1] = "         ";
+        }
+
+        // Create the GUI & filler icon
+        InventoryGui gui = new InventoryGui(plugin,
+                Config.getString("quest-gui.title"),
+                layout);
+        ItemStack fillerIcon = ItemUtil.getIconFromConfig(Config.get(), "quest-gui.border-icon");
+        ItemUtil.setItemName(fillerIcon, " ");
+        gui.setFiller(fillerIcon);
+
+        // Add all the quests to the GUI
+        GuiElementGroup group = new GuiElementGroup('Q');
+        for (Quest quest : questList) {
+            // Get the quest progress info for this team
+            Team.Progress progress = team.getQuestProgress(quest);
+            long progressAmt = progress.getProgress();
+            if (quest.getType() == QuestType.TRAVEL_BLOCKS) progressAmt /= 1000; // Distance is measured in millimeteres
+            progressAmt = Math.min(progressAmt, quest.getGoal()); // Don't show any progress past the goal
+
+            // Build the progress bar
+            int percentComplete = (int) (((double) progressAmt) / ((double) quest.getGoal()) * 100.0);
+            StringBuilder progressBar = new StringBuilder(progressAmt >= quest.getGoal()
+                    ? ChatColor.GREEN.toString()
+                    : ChatColor.YELLOW.toString());
+            for (int i = 0; i < 10; i++) {
+                if (i == percentComplete / 10) {
+                    progressBar.append(ChatColor.DARK_GRAY);
+                }
+                progressBar.append("■");
+            }
+            progressBar.append(" ");
+            progressBar.append(ChatColor.AQUA).append(NumberUtil.formatLong(progressAmt)).append(ChatColor.GRAY)
+                    .append("/").append(ChatColor.YELLOW).append(NumberUtil.formatLong(quest.getGoal()));
+            progressBar.append(" ").append(ChatColor.DARK_GRAY).append("(").append(percentComplete).append("%)");
+
+            // Create the quest icon lore & add to the element group
+            List<String> lore = Config.getStringList(
+                    progress.hasCompleted() ? "quest-gui.quest-finished-text" : "quest-gui.quest-unfinished-text",
+                    "quest", quest.getName(),
+                    "progressbar", progressBar,
+                    "completed", TimeUtil.formatDate(progress.getCompletedAt()),
+                    "cooldown", TimeUtil.formatDate(progress.getCooldownEnd())
+            );
+            group.addElement(new StaticGuiElement('q',
+                    quest.getIcon(),
+                    lore.toArray(new String[]{}))
+            );
+        }
+        gui.addElement(group);
+
+        gui.show(player);
+        return true;
+    }
 
 }

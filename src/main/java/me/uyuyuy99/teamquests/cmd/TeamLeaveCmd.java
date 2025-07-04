@@ -30,7 +30,7 @@ public class TeamLeaveCmd extends SubCmd {
                     if (!member.canLeaveTeam()) {
                         Config.sendMsg("cant-leave-team", player,
                                 "team", team.getName(),
-                                "time", TimeUtil.formatTimeAbbr(member.getLeaveCooldownLeft())
+                                "time", TimeUtil.formatTimeAbbr(member.getLeaveCooldownLeft() / 1000)
                         );
                         return;
                     }

@@ -1,5 +1,7 @@
 package me.uyuyuy99.teamquests;
 
+import dev.jorel.commandapi.CommandAPI;
+import dev.jorel.commandapi.CommandAPIBukkitConfig;
 import lombok.SneakyThrows;
 import me.uyuyuy99.teamquests.cmd.TeamCmd;
 import me.uyuyuy99.teamquests.quest.QuestManager;
@@ -12,6 +14,11 @@ public final class TeamQuests extends JavaPlugin {
     private static TeamQuests plugin;
     private TeamManager teams;
     private QuestManager quests;
+
+    @Override
+    public void onLoad() {
+        CommandAPI.onLoad(new CommandAPIBukkitConfig(this));
+    }
 
     @SneakyThrows
     @Override

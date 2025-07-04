@@ -10,6 +10,8 @@ import lombok.SneakyThrows;
 import me.uyuyuy99.teamquests.Config;
 import me.uyuyuy99.teamquests.TeamQuests;
 import me.uyuyuy99.teamquests.quest.Quest;
+import me.uyuyuy99.teamquests.quest.QuestType;
+import me.uyuyuy99.teamquests.util.NumberUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -136,7 +138,7 @@ public class Team {
         // Find progress object
         Progress progress = null;
         for (Progress p : questProgresses) {
-            if (p.getQuestId().equals(progress.getQuestId())) {
+            if (p.getQuestId().equals(quest.getId())) {
                 progress = p;
                 break;
             }
@@ -151,9 +153,13 @@ public class Team {
         return progress;
     }
 
+    // Checks if team has reached the goal for a specific quest
     public boolean hasCompleted(Quest quest) {
         Progress progress = getQuestProgress(quest);
-        if (progress.getProgress() >= quest.getGoal()) {
+        long progressAmt = progress.getProgress();
+        if (quest.getType() == QuestType.TRAVEL_BLOCKS) progressAmt /= 1000; // Distance is measured in millimeteres
+
+        if (progressAmt >= quest.getGoal()) {
             progress.setCompletedAt(System.currentTimeMillis());
             return true;
         }
@@ -236,6 +242,11 @@ public class Team {
             return (System.currentTimeMillis() - completedAt) > (Config.get().getInt("options.quest-cooldown") * 60000L);
         }
 
+        // Gets the epoch ms time of the end of the cooldown
+        public long getCooldownEnd() {
+            return completedAt + (Config.get().getInt("options.quest-cooldown") * 60000L);
+        }
+
     }
 
     @Getter @Setter @AllArgsConstructor
@@ -275,7 +286,7 @@ public class Team {
                 return new Member(
                         UUID.fromString((String) map.get("uuid")),
                         (String) map.get("name"),
-                        (long) map.get("joinedAt"),
+                        NumberUtil.longValue(map.get("joinedAt")),
                         (List<String>) map.get("cmdQueue")
                 );
             }
@@ -297,8 +308,8 @@ public class Team {
             public Progress deserialize(@NotNull Map<Object, Object> map) {
                 return new Progress(
                         (String) map.get("questId"),
-                        (long) map.get("progress"),
-                        (long) map.get("completedAt")
+                        NumberUtil.longValue(map.get("progress")),
+                        NumberUtil.longValue(map.get("completedAt"))
                 );
             }
         };
@@ -318,7 +329,7 @@ public class Team {
             public Invite deserialize(@NotNull Map<Object, Object> map) {
                 return new Invite(
                         UUID.fromString((String) map.get("uuid")),
-                        (long) map.get("sentAt")
+                        NumberUtil.longValue(map.get("sentAt"))
                 );
             }
         };
