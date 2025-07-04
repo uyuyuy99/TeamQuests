@@ -41,6 +41,12 @@ public class TeamInviteCmd extends SubCmd {
                             return;
                         }
 
+                        // Checks if player is already in another team
+                        if (teams.getTeam(invitee) != null) {
+                            Config.sendMsg("cant-invite-while-in-team", player, "player", invitee.getName());
+                            return;
+                        }
+
                         // Once all checks are done, send out the invite
                         team.addInvite(invitee);
                         Config.sendMsg("sent-invite", player,
@@ -49,7 +55,7 @@ public class TeamInviteCmd extends SubCmd {
                         );
                         Config.sendMsg("received-invite", invitee, "team", team.getName());
                     } else {
-                        Config.sendMsg("cant-invite-while-in-team", player, "player", invitee);
+                        Config.sendMsg("not-in-team", player);
                     }
                 });
     }
